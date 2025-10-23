@@ -1,0 +1,22 @@
+[
+  {
+    "id": "rw-001",
+    "title": "Reading – Choose the correct word",
+    "type": "multiple_fill",
+    "instruction": "Complete the sentences with the correct words.",
+    "items": [
+      {"prompt": "I usually go to school by ____.", "options": ["bus", "orange", "pencil"], "answer": "bus"},
+      {"prompt": "My sister is very ____ at drawing.", "options": ["good", "banana", "table"], "answer": "good"}
+    ]
+  },
+  {
+    "id": "wr-001",
+    "title": "Writing – Short answers",
+    "type": "short_answers",
+    "instruction": "Answer the questions in one short sentence.",
+    "items": [
+      {"prompt": "What do you usually do after school?", "answer_guidance": "One activity, present simple."},
+      {"prompt": "Describe your favorite place in your town.", "answer_guidance": "1–2 sentences, simple adjectives."}
+    ]
+  }
+]
