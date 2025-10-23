@@ -1,0 +1,38 @@
+:root { --page-max: 900px; --accent:#ff7a00; }
+* { box-sizing: border-box; }
+body { font-family: system-ui, Arial, sans-serif; margin: 0; padding: 16px; background:#fafafa; color:#222; }
+header h1 { margin:0 0 4px; }
+.page { position: relative; width: min(100%, var(--page-max)); margin: 12px auto; }
+.page img { width: 100%; height: auto; display: block; }
+
+/* Ô điền */
+.input-box {
+  position: absolute;
+  transform: translate(-50%, -50%); /* căn giữa theo toạ độ % */
+  width: 28%;
+  max-width: 280px;
+  min-width: 120px;
+}
+.input-box input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  font-size: clamp(14px, 2.2vw, 18px);
+  background: rgba(255,255,255,.92);
+  outline: none;
+}
+.input-box.correct input { border-color: #18a558; }
+.input-box.wrong   input { border-color: #e63946; }
+
+.controls { display: flex; gap: 12px; align-items: center; justify-content: center; margin: 16px auto; }
+button { padding:10px 16px; border:0; border-radius: 10px; background: var(--accent); color:#fff; font-weight:600; cursor:pointer; }
+button:hover { filter: brightness(.95); }
+#score { font-weight: 700; }
+
+.wordbank { width: min(100%, var(--page-max)); margin: 12px auto; }
+#bank { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.tag {
+  padding: 6px 10px; background: #fff; border:1px dashed #ccc; border-radius: 999px;
+  font-size: 14px;
+}
