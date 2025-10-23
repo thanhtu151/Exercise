@@ -5,7 +5,7 @@ import gradio as gr
 from datetime import datetime
 from dotenv import load_dotenv
 from openai import OpenAI
-
+on_spaces = os.getenv("SPACE_ID") is not None
 load_dotenv()
 
 # ================== CONFIG ==================
@@ -279,4 +279,5 @@ with gr.Blocks(title="A2 Flyers – AI Practice") as demo:
     )
 
 if __name__ == "__main__":
-    demo.launch()
+    demo.launch(share=not on_spaces)
+
