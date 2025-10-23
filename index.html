@@ -3,102 +3,35 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>A2 Flyers – AI-Graded (Browser LLM)</title>
-  <style>
-    body{font-family:system-ui,Arial;padding:16px;max-width:900px;margin:auto}
-    textarea{width:100%;min-height:90px}
-    .q{margin:8px 0}
-    button{padding:10px 16px}
-    .muted{opacity:.7}
-  </style>
-  <!-- WebLLM via CDN -->
-  <script src="https://unpkg.com/@mlc-ai/web-llm@0.2.49/dist/index.min.js"></script>
+  <title>A2 Flyers – Part 1 Overlay</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>A2 Flyers – AI-Graded (No server, No API key)</h1>
-  <p class="muted">Model chạy trong trình duyệt qua WebGPU. Lần đầu tải model có thể lâu.</p>
+  <header>
+    <h1>A2 Flyers – Part 1</h1>
+    <p>Gõ đáp án vào các ô trên ảnh nền của đề.</p>
+  </header>
 
-  <label>Student name</label>
-  <input id="student" style="width:100%;padding:8px;margin:6px 0"/>
+  <main>
+    <!-- Khung giữ ảnh nền (relative) + các ô input (absolute) -->
+    <div id="page" class="page">
+      <img id="bg" src="part1.png" alt="Part 1 page" />
+      <!-- các ô sẽ được JS tạo từ positions trong data.js -->
+    </div>
 
-  <h3>Exercise: Short answers</h3>
-  <div id="qs"></div>
+    <section class="controls">
+      <button id="check">Check</button>
+      <button id="clear">Clear</button>
+      <div id="score"></div>
+    </section>
 
-  <button id="grade">Grade</button>
-  <pre id="out" style="white-space:pre-wrap;background:#f7f7f7;padding:10px;margin-top:12px"></pre>
+    <details class="wordbank">
+      <summary>Word bank (nhìn từ đề):</summary>
+      <div id="bank"></div>
+    </details>
+  </main>
 
-  <script>
-  // ===== Simple exercise (bạn có thể thay bằng fetch('exercises.json')) =====
-  const exercise = {
-    id: "wr-001",
-    title: "Writing – Short answers",
-    type: "short_answers",
-    items: [
-      { prompt: "What do you usually do after school?", guidance: "One activity, present simple." },
-      { prompt: "Describe your favorite place in your town.", guidance: "1–2 sentences, simple adjectives." }
-    ]
-  };
-
-  // Render questions
-  const qsDiv = document.getElementById('qs');
-  exercise.items.forEach((it, i) => {
-    const wrap = document.createElement('div'); wrap.className = 'q';
-    wrap.innerHTML = `<div><b>Q${i+1}:</b> ${it.prompt} <span class="muted">(${it.guidance||''})</span></div>
-                      <textarea id="ans_${i}" placeholder="Your answer..."></textarea>`;
-    qsDiv.appendChild(wrap);
-  });
-
-  // ===== WebLLM setup =====
-  const { CreateWebWorkerMLCEngine } = window.webllm;
-  let engine;
-  // Model nhỏ hơn để chạy trình duyệt phổ thông (phi-2 Q4f16_1)
-  const model = "Phi-3-mini-4k-instruct-q4f16_1-MLC"; // có sẵn trên WebLLM hub
-
-  async function getEngine() {
-    if (engine) return engine;
-    engine = await CreateWebWorkerMLCEngine(
-      new Worker("https://unpkg.com/@mlc-ai/web-llm@0.2.49/dist/worker.js", { type: "module" }),
-      { model },
-      { context_window_size: 4096 }
-    );
-    return engine;
-  }
-
-  function buildPrompt(studentName, ex, answers) {
-    return `
-You are an A2 Flyers English examiner. Grade fairly for young learners.
-Scoring: 0-5 for each item; return overall score 0-100 and short feedback (<=3 lines).
-
-Student: ${studentName}
-Task: Evaluate short answers for correctness, A2 grammar simplicity, and relevance. Be tolerant of minor spelling mistakes.
-
-Q&A JSON:
-${JSON.stringify(ex.items.map((it, i)=>({prompt: it.prompt, guidance: it.guidance||"", student: answers[i]||""})))}
-
-Return only JSON like:
-{"score": 0-100, "feedback": "..." }`;
-  }
-
-  document.getElementById('grade').onclick = async () => {
-    const student = document.getElementById('student').value || "Anonymous";
-    const answers = exercise.items.map((_, i)=> document.getElementById(`ans_${i}`).value || "");
-    const prompt = buildPrompt(student, exercise, answers);
-
-    const eng = await getEngine();
-    const reply = await eng.chat.completions.create({
-      messages: [
-        { role: "system", content: "You grade A2 Flyers tasks. Output strict JSON only." },
-        { role: "user", content: prompt }
-      ],
-      temperature: 0.2,
-      max_tokens: 300
-    });
-
-    let text = reply.choices?.[0]?.message?.content || "";
-    // Try parse JSON
-    try { text = JSON.stringify(JSON.parse(text), null, 2); } catch(e){}
-    document.getElementById('out').textContent = text;
-  };
-  </script>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
